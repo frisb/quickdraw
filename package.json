@@ -1,0 +1,34 @@
+{
+  "name": "cacheout",
+  "description": "High performance http caching for node.js and express",
+  "contributors": [
+    {
+	  "name": "ashley brener",
+	  "email": "ashley@frisb.com",
+	  "url": "www.frisb.com"
+	}
+  ],
+  "version": "0.0.1",
+  "keywords": [
+    "cache",
+    "node cache",
+    "express cache",
+    "http cache",
+	"etag",
+	"cache-control"
+  ],
+  "bugs": { "url" : "https://github.com/frisB/cacheout/issues" },
+  "license": "MIT",
+  "repository": { 
+	"type" : "git", 
+	"url" : "https://github.com/frisB/cacheout"
+  },
+  "dependencies": {
+	"lru-cache": "2.3.x",
+    "moment": "*"
+  },
+  "main": "./index",
+  "engines": {
+    "node": ">= 0.8.x"
+  }
+}
