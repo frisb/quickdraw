@@ -7,6 +7,7 @@ function CacheOut(app) {
     events.EventEmitter.call(this);
     var self = this;
     
+    this.app = app || null;
     this.caches = new CacheCollection();
     this.caches.on('added', function(cache) {
         self.emit('added', cache);
@@ -20,7 +21,7 @@ function CacheOut(app) {
         
         app.use(middleware);
         
-        app.cacheout = function(path, callback, options) {  
+        app.cache = function(path, callback, options) {  
             app.get(path, self.createListener(options, callback));
         }
     }
