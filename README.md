@@ -7,7 +7,7 @@ cacheout applies high performance http caching client-side and server-side cachi
 
 inspired by [etagify](https://github.com/lloyd/connect-etagify) and a general community requirement for simplified cache control, cacheout leverages @isaacs' [node-lru-cache](https://github.com/isaacs/node-lru-cache) for cache item storage limits and ttl.
 
-cacheout offers an extremely simple interface for applying instant cacheability to node.js web servers and express applications.
+cacheout offers an extremely simple interface for applying instant cacheability to node.js express applications.
 
 contributions are welcome of course.
 
