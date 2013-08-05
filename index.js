@@ -60,8 +60,20 @@ CacheOut.prototype.createListener = function (options, callback) {
     
     return function(req, res) {
         var cache = self.caches.get(req, options);
-        cache.setConditionalHeaders(res);
-        callback(req, res);
+        
+        if (cache.output) {
+            // output is cached
+            
+            console.log(cache.output);
+            
+            cache.sendHeaders(res);
+            res.send(cache.output);
+        }
+        else {
+            // get a fresh copy
+            cache.applyRenderingHandler(res);
+            callback(req, res);
+        }
     }    
 }
 
