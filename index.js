@@ -65,6 +65,8 @@ CacheOut.prototype.createListener = function (options, callback) {
         if (cache.output) {
             // output is cached
             
+            console.log(cache.output);
+            
             cache.sendHeaders(res);
             res.send(cache.output);
         }
