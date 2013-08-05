@@ -3,7 +3,7 @@ cacheout
 
 /kæʃ'aʊt/ (cash-out)
 
-cacheout applies high performance http caching client-side and server-side caching for node.js express.
+cacheout applies high performance http client and server output caching for node.js express.
 
 inspired by [etagify](https://github.com/lloyd/connect-etagify) and a general community requirement for simplified cache control, cacheout leverages @isaacs' [node-lru-cache](https://github.com/isaacs/node-lru-cache) for cache item storage limits and ttl.
 

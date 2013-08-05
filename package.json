@@ -1,6 +1,6 @@
 {
   "name": "cacheout",
-  "description": "High performance http caching for node.js and express",
+  "description": "High performance http client and server output caching for node.js express",
   "contributors": [
     {
 	  "name": "ashley brener",
@@ -8,7 +8,7 @@
 	  "url": "www.frisb.com"
 	}
   ],
-  "version": "0.1.1",
+  "version": "0.1.2",
   "keywords": [
     "cache",
     "node cache",
