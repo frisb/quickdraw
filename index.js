@@ -1,78 +1,68 @@
+var events = require('events');
+var util = require('util');
+
 var CacheCollection = require('./lib/cachecollection');
 
-var caches = new CacheCollection();
-
-module.exports = function (app) {
+function CacheOut(app) {
+    events.EventEmitter.call(this);
+    var self = this;
+    
+    this.caches = new CacheCollection();
+    this.caches.on('added', function(cache) {
+        self.emit('added', cache);
+    });
+    this.caches.on('removed', function(cache) {
+        self.emit('removed', cache);
+    });
+    
     if (app && app.get) {
         // express
         
         app.use(middleware);
         
         app.cacheout = function(path, callback, options) {  
-            app.get(path, createListener(options, callback));
+            app.get(path, self.createListener(options, callback));
         }
     }
-    
-    return {
-        createListener: createListener
-    };
+
+    function middleware(req, res, next) {
+        if (self.caches.items[req.path]) {
+            var cache = self.caches.get(req);
+            
+            if (cache) {
+                if (!cache.isModified(req, res)) {
+                    removeContentHeaders(res);
+                    res.statusCode = 304;
+                    res.end();
+                    
+                    // not modified so must end request lifecycle
+                    return;
+                }
+                else {
+                    // client wants full response so send headers and continue
+                    cache.sendHeaders(res);
+                }
+            }
+        }
+        
+        next();
+    }
 }
 
-function createListener(options, callback) {
+util.inherits(CacheOut, events.EventEmitter);
+
+module.exports = function(app) {
+    return new CacheOut(app);
+}
+
+CacheOut.prototype.createListener = function (options, callback) {
+    var self = this;
+    
     return function(req, res) {
-        var cache = caches.get(req, options);
+        var cache = self.caches.get(req, options);
         cache.setConditionalHeaders(res);
         callback(req, res);
     }    
-}
-
-function middleware(req, res, next) {
-    if (caches.items[req.path]) {
-        var cache = caches.get(req);
-        
-        console.log(cache);
-        
-        if (!isModified(req, res, cache)) {
-            removeContentHeaders(res);
-            res.statusCode = 304;
-            res.end();
-            
-            // not modified so must end request lifecycle
-            return;
-        }
-        else {
-            // is modified so send new headers
-            cache.sendHeaders(res);
-        }
-    }
-    
-    next();
-}
-
-function isModified(req, res, cache) {    
-    var modifiedSince = req.headers['if-modified-since'];
-    var noneMatch = req.headers['if-none-match'];
-    
-    if (cache !== null && (modifiedSince || noneMatch)) {    
-        // check If-None-Match
-        if (noneMatch === cache.headers.ETag) {
-            return false;
-        }
-        
-        // check If-Modified-Since
-        var lastModified = cache.headers['Last-Modified'];
-        
-        if (modifiedSince && lastModified) {
-            modifiedSince = new Date(modifiedSince);
-            lastModified = new Date(lastModified);
-            
-            if (lastModified <= modifiedSince) { 
-                return false;
-            }
-        }
-    }
-        
-    return true;
 }
 
 function removeContentHeaders(res){
