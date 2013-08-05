@@ -8,7 +8,7 @@
 	  "url": "www.frisb.com"
 	}
   ],
-  "version": "0.0.1",
+  "version": "0.1.0",
   "keywords": [
     "cache",
     "node cache",
@@ -24,8 +24,7 @@
 	"url" : "https://github.com/frisB/cacheout"
   },
   "dependencies": {
-	"lru-cache": "2.3.x",
-    "moment": "*"
+	"lru-cache": "2.3.x"
   },
   "main": "./index",
   "engines": {
