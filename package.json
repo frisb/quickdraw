@@ -8,14 +8,16 @@
 	  "url": "www.frisb.com"
 	}
   ],
-  "version": "0.1.3",
+  "version": "0.2.0",
   "keywords": [
     "cache",
     "node cache",
     "express cache",
     "http cache",
 	"etag",
-	"cache-control"
+	"cache-control",
+	"vary",
+	"static cache"
   ],
   "bugs": { "url" : "https://github.com/frisB/cacheout/issues" },
   "license": "MIT",

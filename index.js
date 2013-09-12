@@ -1,13 +1,14 @@
 var events = require('events');
+var express = require('express');
 var util = require('util');
 
 var CacheCollection = require('./lib/cachecollection');
+var Middleware = require('./lib/middleware');
 
 function CacheOut(app) {
     events.EventEmitter.call(this);
     var self = this;
     
-    this.app = app || null;
     this.caches = new CacheCollection();
     this.caches.on('added', function(cache) {
         self.emit('added', cache);
@@ -16,37 +17,10 @@ function CacheOut(app) {
         self.emit('removed', cache);
     });
     
-    if (app && app.get) {
-        // express
-        
-        app.use(middleware);
-        
-        app.cache = function(path, callback, options) {  
-            app.get(path, self.createListener(options, callback));
-        }
-    }
-
-    function middleware(req, res, next) {
-        if (self.caches.items[req.path]) {
-            var cache = self.caches.get(req);
-            
-            if (cache) {
-                if (!cache.isModified(req, res)) {
-                    removeContentHeaders(res);
-                    res.statusCode = 304;
-                    res.end();
-                    
-                    // not modified so must end request lifecycle
-                    return;
-                }
-                else {
-                    // client wants full response so send headers and continue
-                    cache.sendHeaders(res);
-                }
-            }
-        }
-        
-        next();
+    this.middleware = new Middleware(this.caches);
+    
+    if (app) {
+        this.enhanceExpress(app);
     }
 }
 
@@ -56,35 +30,40 @@ module.exports = function(app) {
     return new CacheOut(app);
 }
 
-CacheOut.prototype.createListener = function (options, callback) {
+CacheOut.prototype.enhanceExpress = function (app) {
     var self = this;
     
-    return function(req, res) {
-        var cache = self.caches.get(req, options);
-        
-        if (cache.output) {
-            // output is cached
+    app.enable('view cache');
+    
+    app.use(this.middleware.versionedPath());
+    app.use(this.middleware.conditionMatcher());
+    
+    this.static = function (root, options) {
+        var handler = express.static(root, options);
+        return self.middleware.outputCacher(handler, options, root);
+    }
+    
+    cacheVerb('get');
+    cacheVerb('post');
+    cacheVerb('all');
+    
+    function cacheVerb(verb) {
+        var fn = app[verb];
+        app[verb] = function () {
+            var args = arguments;
             
-            cache.sendHeaders(res);
-            res.send(cache.output);
-        }
-        else {
-            // get a fresh copy
-            cache.applyRenderingHandler(res);
-            callback(req, res);
-        }
-    }    
-}
-
-function removeContentHeaders(res){
-    if (res._headers) {
-        var headerNames = Object.keys(res._headers);
-        
-        for (var i = 0; headerNames[i]; i++) {
-            var headerName = headerNames[i];
-            if (headerName.indexOf('content') === 0) {
-                res.removeHeader(headerName);
+            if (arguments.length > 1 && typeof(arguments[arguments.length - 1]) == 'object') {
+                var path = arguments[0];
+                var options = arguments[arguments.length - 1];
+                var callbacks = Array.prototype.slice.call(arguments, 1, arguments.length - 1);
+                
+                args = [
+                    path,
+                    self.middleware.outputCacher(callbacks, options) // inject cache handler
+                ];
             }
+            
+            return fn.apply(app, args);
         }
     }
 }
