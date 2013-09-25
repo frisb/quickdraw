@@ -1,23 +1,21 @@
 var events = require('events');
-var express = require('express');
 var util = require('util');
 
-var CacheCollection = require('./lib/cachecollection');
-var Middleware = require('./lib/middleware');
+var caches = require('./lib/cachecollection')();
 
 function CacheOut(app) {
     events.EventEmitter.call(this);
     var self = this;
     
-    this.caches = new CacheCollection();
-    this.caches.on('added', function(cache) {
+    caches.viewPath = app.get('views');
+    caches.viewEngine = app.get('view engine');
+    
+    caches.on('added', function(cache) {
         self.emit('added', cache);
     });
-    this.caches.on('removed', function(cache) {
+    caches.on('removed', function(cache) {
         self.emit('removed', cache);
     });
-    
-    this.middleware = new Middleware(this.caches);
     
     if (app) {
         this.enhanceExpress(app);
@@ -31,23 +29,14 @@ module.exports = function(app) {
 }
 
 CacheOut.prototype.enhanceExpress = function (app) {
-    var self = this;
+    var versionedUrlMiddleware = require('./lib/middleware/versionedurl');
+    var conditionMatcherMiddleware = require('./lib/middleware/conditionmatcher');
+    var outputCacheMiddleware = require('./lib/middleware/outputcache');
+    var staticMiddleware = require('./lib/middleware/static');
     
-    //app.enable('view cache');
-    
-    app.use(this.middleware.versionedPath());
-    app.use(this.middleware.conditionMatcher());
-    
-    this.static = function (root, options) {
-        var handler = express.static(root, options);
-        
-        if (options['cache-control'] && options['cache-control'] !== 'no-cache') {
-            return self.middleware.outputCache(handler, options, root);
-        }
-        else {
-            return handler;
-        }
-    }
+    app.use(versionedUrlMiddleware);
+    app.use(conditionMatcherMiddleware);
+    this.static = staticMiddleware;
     
     cacheVerb('get');
     cacheVerb('post');
@@ -65,7 +54,7 @@ CacheOut.prototype.enhanceExpress = function (app) {
                 
                 args = [
                     path,
-                    self.middleware.outputCache(callbacks, options) // inject cache handler
+                    outputCacheMiddleware(callbacks, options) // inject cache handler
                 ];
             }
             
