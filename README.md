@@ -9,6 +9,15 @@ quickdraw offers an extremely simple interface for applying instant cacheability
 
 contributions are welcome of course.
 
+## features
+
+* `simple api` Enhances existing express functions.
+* `vary` Vary by headers and querystring parameters.
+* `conditional headers` ETag and Last-Modified.
+* `lru` node-lru-cache under the hood.
+* `file dependencies` For static and dynamic output.
+* `server side output cache`. For fast output delivery.
+
 ## examples
 
 ### Cache-Control: private
