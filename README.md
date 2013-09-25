@@ -103,7 +103,7 @@ quickdraw.on('added', function(cache) {
 
 quickdraw.on('removed', function(cache) {
     console.log('removed ' + cache.vary.aggregateKey)
-});app.cache
+});
 ```
 
 ## installation
