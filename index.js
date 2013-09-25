@@ -33,14 +33,20 @@ module.exports = function(app) {
 CacheOut.prototype.enhanceExpress = function (app) {
     var self = this;
     
-    app.enable('view cache');
+    //app.enable('view cache');
     
     app.use(this.middleware.versionedPath());
     app.use(this.middleware.conditionMatcher());
     
     this.static = function (root, options) {
         var handler = express.static(root, options);
-        return self.middleware.outputCacher(handler, options, root);
+        
+        if (options['cache-control'] && options['cache-control'] !== 'no-cache') {
+            return self.middleware.outputCache(handler, options, root);
+        }
+        else {
+            return handler;
+        }
     }
     
     cacheVerb('get');
@@ -59,7 +65,7 @@ CacheOut.prototype.enhanceExpress = function (app) {
                 
                 args = [
                     path,
-                    self.middleware.outputCacher(callbacks, options) // inject cache handler
+                    self.middleware.outputCache(callbacks, options) // inject cache handler
                 ];
             }
             
