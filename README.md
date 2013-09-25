@@ -1,7 +1,7 @@
 quickdraw
 ===
 
-quickdraw applies high performance http client and server output caching for node.js express.
+quickdraw applies high performance http client and server output caching for blazing fast content delivery to the browser.
 
 partially inspired by [etagify](https://github.com/lloyd/connect-etagify) and a general community requirement for simplified cache control, quickdraw leverages @isaacs' [node-lru-cache](https://github.com/isaacs/node-lru-cache) for cache item storage limits and ttl.
 
@@ -22,7 +22,7 @@ contributions are welcome of course.
 
 ## examples
 
-### Dyanamic > Cache-Control: private
+### Cache-Control: private
 
 cache on the server and client only for 60 seconds, varying by "User-Agent" header and "Test" querystring parameter
 
@@ -55,7 +55,7 @@ http.createServer(app).listen(3333, function() {
 ```
 
 
-### Dynamic > Cache-Control: public with a fileDependency and static cache middleware
+### Cache-Control: public with a fileDependency and static cache middleware
 
 cache downstream for 15 seconds, with no vary
 
