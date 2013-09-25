@@ -17,6 +17,7 @@ contributions are welcome of course.
 * `lru` - node-lru-cache under the hood.
 * `file dependencies` - For static and dynamic output.
 * `server side output cache` - For fast output delivery.
+* `all verbs` - GET / POST / PUT.
 * `versioned url support` - For browser cached url invalidation.
 * `static cache` - Custom cache for static files.
 
@@ -75,7 +76,7 @@ app.use(app.router);
 // use instead of express.static for custom cacheability
 app.use(quickdraw.static(path.join(__dirname, 'public'), {
     'cache-control': 'public',                      // cache on browser and intermediate proxies
-    maxAge: 7 * 60 * 60 * 24,                       // expires after one day
+    maxAge: 60 * 60 * 24 * 7,                       // expires after 7 days
     cacheOutput: true                               // cache output so ouput from memory for the next <maxAge> seconds
 }));
 
