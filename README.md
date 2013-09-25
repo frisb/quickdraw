@@ -1,13 +1,11 @@
-cacheout
+quickdraw
 ===
 
-/kæʃ'aʊt/ (cash-out)
+quickdraw applies high performance http client and server output caching for node.js express.
 
-cacheout applies high performance http client and server output caching for node.js express.
+inspired by [etagify](https://github.com/lloyd/connect-etagify) and a general community requirement for simplified cache control, quickdraw leverages @isaacs' [node-lru-cache](https://github.com/isaacs/node-lru-cache) for cache item storage limits and ttl.
 
-inspired by [etagify](https://github.com/lloyd/connect-etagify) and a general community requirement for simplified cache control, cacheout leverages @isaacs' [node-lru-cache](https://github.com/isaacs/node-lru-cache) for cache item storage limits and ttl.
-
-cacheout offers an extremely simple interface for applying instant cacheability to node.js express applications.
+quickdraw offers an extremely simple interface for applying instant cacheability to node.js express applications.
 
 contributions are welcome of course.
 
@@ -22,11 +20,11 @@ var express = require('express');
 var http = require('http');
 
 var app = express();
-var cacheout = require('cacheout')(app);
+var quickdraw = require('quickdraw')(app);
 
 var options = {
+    'cache-control': 'private',     // only cache on the browser, not intermediate proxies
     maxAge: 60,                     // 60sec
-    cacheability: 'private',        // only cache on the browser, not intermediate proxies
     varyByHeaders: 'User-Agent',    // vary by browser useragent
     varyByParams: 'Test',           // also vary by querystring param Test
     cacheOutput: true               // cache rendered output so not re-rendered for the next <maxAge> seconds
@@ -51,11 +49,11 @@ var express = require('express');
 var http = require('http');
 
 var app = express();
-var cacheout = require('cacheout')(app);
+var quickdraw = require('quickdraw')(app);
 
 var options = {
+    'cache-control': 'public',      // cache on browser and intermediate proxies
     maxAge: 15,                     // 15sec
-    cacheability: 'public',         // cache on browser and intermediate proxies
     cacheOutput: false              // do not cache rendered output
 };
 
@@ -71,11 +69,11 @@ http.createServer(app).listen(3333, function() {
 ### wiring up events
 
 ``` js
-cacheout.on('added', function(cache) {
+quickdraw.on('added', function(cache) {
     console.log('added ' + cache.vary.aggregateKey)
 });
 
-cacheout.on('removed', function(cache) {
+quickdraw.on('removed', function(cache) {
     console.log('removed ' + cache.vary.aggregateKey)
 });app.cache
 ```
@@ -83,7 +81,7 @@ cacheout.on('removed', function(cache) {
 ## installation
 
 ```
-  npm install cacheout
+  npm install quickdraw
 ```
 
 ## enjoy :)
