@@ -1,6 +1,8 @@
 quickdraw
 ===
 
+[![npm status badge](https://nodei.co/npm/quickdraw.png?stars=true&downloads=true)](https://nodei.co/npm/quickdraw/)
+
 quickdraw applies high performance http client and server output caching for blazing fast content delivery to the browser.
 
 partially inspired by [etagify](https://github.com/lloyd/connect-etagify) and a general community requirement for simplified cache control, quickdraw leverages @isaacs' [node-lru-cache](https://github.com/isaacs/node-lru-cache) for cache item storage limits and ttl.
