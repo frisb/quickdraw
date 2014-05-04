@@ -114,11 +114,6 @@ quickdraw.on('removed', function(cache) {
   npm install quickdraw
 ```
 
-## enjoy :)
-
-#### the frisB.com team ( [ring the world](http://www.frisb.com "frisB.com") )
-
-
 ## License
 
 (The MIT License)
